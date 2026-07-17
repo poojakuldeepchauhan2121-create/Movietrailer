@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to the Jungle — Movie Trailer</title>
+    <style>
+        /* ─── RESET & BASE ─────────────────────────────────── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0a0f;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* ─── NAVBAR ────────────────────────────────────────── */
+        nav {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            padding: 0.8rem 4%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #e50914;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        nav .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #e50914;
+        }
+
+        nav .logo span {
+            color: #fff;
+            font-weight: 300;
+        }
+
+        nav .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        nav .nav-links a {
+            color: #aaa;
+            transition: color 0.2s;
+        }
+
+        nav .nav-links a:hover {
+            color: #fff;
+        }
+
+        /* ─── CONTAINER ────────────────────────────────────── */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 4%;
+            flex: 1;
+            width: 100%;
+        }
+
+        /* ─── BACK LINK ────────────────────────────────────── */
+        .back-link {
+            display: inline-block;
+            color: #e50914;
+            font-weight: 600;
+            margin-bottom: 1.2rem;
+            transition: color 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .back-link:hover {
+            color: #f40612;
+            text-decoration: underline;
+        }
+
+        /* ─── VIDEO WRAPPER ────────────────────────────────── */
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            /* 16:9 */
+            height: 0;
+            overflow: hidden;
+            border-radius: 16px;
+            background: #000;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+            margin-bottom: 1.5rem;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* ─── MOVIE INFO ────────────────────────────────────── */
+        .movie-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .movie-info .details {
+            flex: 2;
+            min-width: 250px;
+        }
+
+        .movie-info .details h1 {
+            font-size: clamp(1.6rem, 3vw, 2.4rem);
+            font-weight: 800;
+            margin-bottom: 0.25rem;
+            color: #fff;
+        }
+
+        .movie-info .details .tagline {
+            color: #e50914;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .movie-info .details .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 1rem;
+        }
+
+        .movie-info .details .meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .movie-info .details .description {
+            color: #aaa;
+            line-height: 1.7;
+            font-size: 0.95rem;
+            max-width: 600px;
+        }
+
+        .movie-info .poster {
+            flex: 0 0 160px;
+            background: linear-gradient(135deg, #1a1a2e, #2a2a4e);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            min-height: 220px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        /* ─── ACTION BUTTONS ────────────────────────────────── */
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin: 1.5rem 0 2rem;
+        }
+
+        .btn {
+            padding: 0.7rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: #e50914;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #f40612;
+            transform: scale(1.03);
+            box-shadow: 0 8px 30px rgba(229, 9, 20, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: #e5e5e5;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* ─── MORE TRAILERS ────────────────────────────────── */
+        .more-section {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #222;
+        }
+
+        .more-section h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .more-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 1rem;
+        }
+
+        .more-card {
+            background: #1a1a2e;
+            border-radius: 10px;
+            padding: 0.8rem;
+            text-align: center;
+            transition: transform 0.25s, border-color 0.25s;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+
+        .more-card:hover {
+            transform: translateY(-4px);
+            border-color: #e50914;
+        }
+
+        .more-card .icon {
+            font-size: 2.2rem;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .more-card .title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .more-card .year {
+            font-size: 0.65rem;
+            color: #666;
+        }
+
+        /* ─── FOOTER ────────────────────────────────────────── */
+        footer {
+            background: #1a1a2e;
+            padding: 1.5rem 4%;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #444;
+            border-top: 1px solid #222;
+            margin-top: auto;
+        }
+
+        footer a {
+            color: #e50914;
+        }
+
+        /* ─── RESPONSIVE ────────────────────────────────────── */
+        @media (max-width: 600px) {
+            nav .logo {
+                font-size: 1.2rem;
+            }
+            nav .nav-links {
+                gap: 0.8rem;
+                font-size: 0.8rem;
+            }
+            .movie-info {
+                flex-direction: column;
+            }
+            .movie-info .poster {
+                flex: 1 1 auto;
+                min-height: 120px;
+                font-size: 2.5rem;
+            }
+            .more-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            .action-buttons .btn {
+                flex: 1;
+                justify-content: center;
+                padding: 0.6rem 1rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ─── NAVBAR ────────────────────────────────────────── -->
+    <nav>
+        <div class="logo">Movie<span>Trailers</span></div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/trailers">All Trailers</a>
+        </div>
+    </nav>
+
+    <!-- ─── MAIN ───────────────────────────────────────────── -->
+    <div class="container">
+        <a href="/trailers" class="back-link">← Back to All Trailers</a>
+
+        <!-- Video -->
+        <div class="video-wrapper">
+            <iframe 
+                src="https://www.youtube.com/embed/R704yP3dlXw?si=EijKXt237w1AD3wY&autoplay=1&rel=0" 
+                title="Welcome to the Jungle — Official Trailer" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                referrerpolicy="strict-origin-when-cross-origin" 
+                allowfullscreen>
+            </iframe>
+        </div>
+
+        <!-- Movie Info -->
+        <div class="movie-info">
+            <div class="details">
+                <h1>Welcome to the Jungle</h1>
+                <div class="tagline">🎬 Official Trailer</div>
+                <div class="meta">
+                    <span>📅 2025</span>
+                    <span>🎭 Action, Adventure, Comedy</span>
+                    <span>⭐ 4.2 ★</span>
+                    <span>⏱️ 2:30</span>
+                </div>
+                <p class="description">
+                    A group of unlikely heroes must navigate the dangers of a mysterious jungle 
+                    to uncover a lost treasure. Packed with action, humor, and unexpected twists, 
+                    this is the adventure of a lifetime.
+                </p>
+            </div>
+            <div class="poster">
+                🌴
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="https://www.youtube.com/watch?v=R704yP3dlXw" target="_blank" class="btn btn-primary">
+                ▶ Watch on YouTube
+            </a>
+            <a href="/trailers" class="btn btn-secondary">
+                🎞️ More Trailers
+            </a>
+            <button class="btn btn-secondary" onclick="window.location.reload();">
+                🔄 Replay
+            </button>
+        </div>
+
+        <!-- More Trailers -->
+        <div class="more-section">
+            <h3>🎥 You Might Also Like</h3>
+            <div class="more-grid" id="moreGrid">
+                <!-- Rendered by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── FOOTER ──────────────────────────────────────────── -->
+    <footer>
+        &copy; 2025 <a href="/">MovieTrailers</a> — All rights reserved.
+    </footer>
+
+    <script>
+        // ─── TRAILER DATA ──────────────────────────────────────
+        const TRAILERS = [{
+            slug: 'interstellar',
+            title: 'Interstellar',
+            year: '2014',
+            genre: 'Sci-Fi, Drama',
+            emoji: '🚀'
+        }, {
+            slug: 'inception',
+            title: 'Inception',
+            year: '2010',
+            genre: 'Sci-Fi, Action',
+            emoji: '🌀'
+        }, {
+            slug: 'dark-knight',
+            title: 'The Dark Knight',
+            year: '2008',
+            genre: 'Action, Crime',
+            emoji: '🦇'
+        }, {
+            slug: 'dune-part-two',
+            title: 'Dune: Part Two',
+            year: '2024',
+            genre: 'Sci-Fi, Adventure',
+            emoji: '🏜️'
+        }, {
+            slug: 'gladiator-2',
+            title: 'Gladiator II',
+            year: '2024',
+            genre: 'Action, Drama',
+            emoji: '⚔️'
+        }, {
+            slug: 'deadpool-wolverine',
+            title: 'Deadpool & Wolverine',
+            year: '2024',
+            genre: 'Action, Comedy',
+            emoji: '🦊'
+        }];
+
+        function getTrailerUrl(slug) {
+            return `/trailers/${slug}.html`;
+        }
+
+        // ─── RENDER "MORE TRAILERS" ────────────────────────────
+        function renderMoreTrailers() {
+            const grid = document.getElementById('moreGrid');
+            // Show all except "Welcome to the Jungle"
+            const others = TRAILERS.filter(t => t.slug !== 'welcome-to-the-jungle');
+            // Randomize and take first 6
+            const shuffled = [...others].sort(() => Math.random() - 0.5);
+            const picks = shuffled.slice(0, 6);
+
+            if (picks.length === 0) {
+                grid.innerHTML = `
+                    <div style="color:#555; grid-column:1/-1; text-align:center; padding:1rem 0;">
+                        More trailers coming soon!
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = picks.map(t => `
+                <a href="${getTrailerUrl(t.slug)}" class="more-card">
+                    <span class="icon">${t.emoji || '🎬'}</span>
+                    <div class="title">${t.title}</div>
+                    <div class="year">${t.year || 'TBA'}</div>
+                </a>
+            `).join('');
+        }
+
+        // ─── INIT ──────────────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', renderMoreTrailers);
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            renderMoreTrailers();
+        }
+    </script>
+
+</body>
+</html>
