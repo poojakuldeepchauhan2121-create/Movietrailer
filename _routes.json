@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "include": ["/*"],
+  "exclude": [],
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/trailers",
+      "destination": "/trailers.html"
+    },
+    {
+      "source": "/trailers/*",
+      "destination": "/trailers.html"
+    }
+  ]
+}
