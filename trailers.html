@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>All Trailers — MovieTrailers</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #141414;
+            color: #fff;
+            min-height: 100vh;
+        }
+        nav {
+            background: #141414;
+            padding: 0.8rem 4%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #222;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        nav .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #e50914;
+        }
+        nav .logo span {
+            color: #fff;
+            font-weight: 300;
+        }
+        nav .nav-links a {
+            color: #e5e5e5;
+            text-decoration: none;
+            margin-left: 1.5rem;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        nav .nav-links a:hover,
+        nav .nav-links a.active {
+            color: #fff;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 4%;
+        }
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .page-title .highlight {
+            color: #e50914;
+        }
+        .subtitle {
+            color: #888;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+        .trailer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+        .trailer-card {
+            background: #1a1a2e;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: #fff;
+        }
+        .trailer-card:hover {
+            transform: scale(1.04);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+        }
+        .trailer-card .thumb {
+            aspect-ratio: 16 / 9;
+            background: linear-gradient(135deg, #2a2a4e, #1a1a2e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #444;
+            position: relative;
+        }
+        .trailer-card .thumb .play {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: rgba(229, 9, 20, 0.85);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .trailer-card:hover .thumb .play {
+            opacity: 1;
+        }
+        .trailer-card .info {
+            padding: 0.8rem 1rem 1rem;
+        }
+        .trailer-card .info h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .trailer-card .info .meta {
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 0.2rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+        .trailer-card .info .genre {
+            font-size: 0.7rem;
+            color: #666;
+            margin-top: 0.2rem;
+        }
+        .back-link {
+            display: inline-block;
+            color: #e50914;
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 4rem 1rem;
+            color: #666;
+            grid-column: 1 / -1;
+        }
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        .empty-state h3 {
+            color: #888;
+        }
+        @media (max-width: 600px) {
+            .trailer-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            .container {
+                padding: 1rem 4%;
+            }
+            nav .nav-links a {
+                margin-left: 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">Movie<span>Trailers</span></div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/trailers" class="active">All Trailers</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="/" class="back-link">← Back to Home</a>
+        <h1 class="page-title">🎬 All <span class="highlight">Trailers</span></h1>
+        <p class="subtitle">Browse every trailer in our collection</p>
+        <div class="trailer-grid" id="trailerGrid"></div>
+    </div>
+
+    <script>
+        // ─── SAME DATA AS INDEX.HTML ──────────────────────────────
+        const TRAILERS = [{
+            slug: 'interstellar',
+            title: 'Interstellar',
+            year: '2014',
+            genre: 'Sci-Fi, Drama'
+        }, {
+            slug: 'inception',
+            title: 'Inception',
+            year: '2010',
+            genre: 'Sci-Fi, Action'
+        }, {
+            slug: 'dark-knight',
+            title: 'The Dark Knight',
+            year: '2008',
+            genre: 'Action, Crime'
+        }, {
+            slug: 'gladiator-2',
+            title: 'Gladiator II',
+            year: '2024',
+            genre: 'Action, Drama'
+        }, {
+            slug: 'dune-part-two',
+            title: 'Dune: Part Two',
+            year: '2024',
+            genre: 'Sci-Fi, Adventure'
+        }, {
+            slug: 'furiosa',
+            title: 'Furiosa: A Mad Max Saga',
+            year: '2024',
+            genre: 'Action, Adventure'
+        }, {
+            slug: 'inside-out-2',
+            title: 'Inside Out 2',
+            year: '2024',
+            genre: 'Animation, Comedy'
+        }, {
+            slug: 'deadpool-wolverine',
+            title: 'Deadpool & Wolverine',
+            year: '2024',
+            genre: 'Action, Comedy'
+        }, {
+            slug: 'wicked',
+            title: 'Wicked',
+            year: '2024',
+            genre: 'Fantasy, Musical'
+        }, {
+            slug: 'moana-2',
+            title: 'Moana 2',
+            year: '2024',
+            genre: 'Animation, Adventure'
+        }, {
+            slug: 'sonic-3',
+            title: 'Sonic the Hedgehog 3',
+            year: '2024',
+            genre: 'Action, Comedy'
+        }, {
+            slug: 'mufasa',
+            title: 'Mufasa: The Lion King',
+            year: '2024',
+            genre: 'Animation, Adventure'
+        }, {
+            slug: 'avatar-3',
+            title: 'Avatar: Fire and Ash',
+            year: '2025',
+            genre: 'Sci-Fi, Adventure'
+        }, {
+            slug: 'superman-2025',
+            title: 'Superman (2025)',
+            year: '2025',
+            genre: 'Action, Adventure'
+        }, {
+            slug: 'fantastic-four',
+            title: 'The Fantastic Four',
+            year: '2025',
+            genre: 'Action, Sci-Fi'
+        }, {
+            slug: 'jurassic-world-rebirth',
+            title: 'Jurassic World Rebirth',
+            year: '2025',
+            genre: 'Action, Adventure'
+        }, {
+            slug: 'the-batman-2',
+            title: 'The Batman Part II',
+            year: '2026',
+            genre: 'Action, Crime'
+        }, {
+            slug: 'dune-messiah',
+            title: 'Dune: Messiah',
+            year: '2026',
+            genre: 'Sci-Fi, Adventure'
+        }, {
+            slug: 'star-wars-new-jedi',
+            title: 'Star Wars: New Jedi Order',
+            year: '2026',
+            genre: 'Sci-Fi, Adventure'
+        }, {
+            slug: 'avengers-secret-wars',
+            title: 'Avengers: Secret Wars',
+            year: '2027',
+            genre: 'Action, Sci-Fi'
+        }];
+
+        function getTrailerUrl(slug) {
+            return `/trailers/${slug}.html`;
+        }
+
+        function getGenreEmoji(genre) {
+            const emojis = {
+                'Action': '⚡',
+                'Adventure': '🗺️',
+                'Animation': '🎨',
+                'Comedy': '😂',
+                'Crime': '🔫',
+                'Drama': '🎭',
+                'Fantasy': '🐉',
+                'Musical': '🎵',
+                'Sci-Fi': '🚀',
+                'Thriller': '🔪',
+                'Horror': '👻'
+            };
+            for (const [key, emoji] of Object.entries(emojis)) {
+                if (genre.includes(key)) return emoji;
+            }
+            return '🎬';
+        }
+
+        function renderAllTrailers() {
+            const grid = document.getElementById('trailerGrid');
+
+            if (TRAILERS.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">📭</div>
+                        <h3>No trailers yet</h3>
+                        <p style="color:#666; font-size:0.9rem;">Check back soon!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = TRAILERS.map(t => `
+                <a href="${getTrailerUrl(t.slug)}" class="trailer-card">
+                    <div class="thumb">
+                        ${getGenreEmoji(t.genre)}
+                        <div class="play">▶</div>
+                    </div>
+                    <div class="info">
+                        <h4>${t.title}</h4>
+                        <div class="meta">
+                            <span>📅 ${t.year || 'TBA'}</span>
+                        </div>
+                        <div class="genre">${t.genre || 'Coming Soon'}</div>
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', renderAllTrailers);
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            renderAllTrailers();
+        }
+    </script>
+
+</body>
+</html>
