@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MovieTrailers — Watch the Best Trailers</title>
+    <style>
+        /* ─── RESET & BASE ─────────────────────────────────── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #141414;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* ─── SCROLLBAR ────────────────────────────────────── */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #141414;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #777;
+        }
+
+        /* ─── NAVBAR ────────────────────────────────────────── */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 0.8rem 4%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(180deg, #141414 0%, transparent 100%);
+            transition: background 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            background: #141414;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .navbar .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #e50914;
+            letter-spacing: -0.5px;
+        }
+
+        .navbar .logo span {
+            color: #fff;
+            font-weight: 300;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1.8rem;
+            font-size: 0.9rem;
+        }
+
+        .nav-links a {
+            color: #e5e5e5;
+            transition: color 0.2s;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+        }
+
+        .nav-links a.active {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+
+        .nav-right .search-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .nav-right .search-btn:hover {
+            color: #e50914;
+        }
+
+        .nav-right .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            background: #e50914;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        /* ─── HERO / FEATURED ──────────────────────────────── */
+        .hero {
+            position: relative;
+            height: 85vh;
+            min-height: 480px;
+            display: flex;
+            align-items: center;
+            padding: 0 4%;
+            margin-top: 0;
+            background: #0a0a0a;
+            overflow: hidden;
+        }
+
+        .hero-backdrop {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0a0a0f 100%);
+            z-index: 0;
+        }
+
+        .hero-backdrop::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(20, 20, 20, 0.9) 0%, rgba(20, 20, 20, 0.4) 60%, transparent 100%);
+        }
+
+        /* Animated background particles */
+        .hero-particles {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .hero-particles span {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(229, 9, 20, 0.3);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1);
+                opacity: 0;
+            }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 560px;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-content .badge {
+            display: inline-block;
+            background: #e50914;
+            padding: 0.2rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.8rem;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(2.2rem, 5vw, 4rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 0.6rem;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-content h1 .highlight {
+            color: #e50914;
+        }
+
+        .hero-content p {
+            font-size: 1.05rem;
+            color: #aaa;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            max-width: 480px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            padding: 0.7rem 2.2rem;
+            background: #e50914;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            background: #f40612;
+            transform: scale(1.03);
+        }
+
+        .btn-secondary {
+            padding: 0.7rem 2.2rem;
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(4px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* ─── ROW SECTIONS ──────────────────────────────────── */
+        .section {
+            padding: 1.5rem 4% 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .section-header .see-all {
+            font-size: 0.8rem;
+            color: #aaa;
+            transition: color 0.2s;
+            font-weight: 500;
+        }
+
+        .section-header .see-all:hover {
+            color: #fff;
+        }
+
+        /* ─── MOVIE ROW (horizontal scroll) ───────────────── */
+        .row {
+            display: flex;
+            gap: 0.6rem;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 0.5rem 0 1.5rem;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .row::-webkit-scrollbar {
+            height: 6px;
+        }
+        .row::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .row::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 4px;
+        }
+        .row::-webkit-scrollbar-thumb:hover {
+            background: #666;
+        }
+
+        /* ─── MOVIE CARD ────────────────────────────────────── */
+        .movie-card {
+            flex: 0 0 200px;
+            min-width: 160px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #1a1a2e;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .movie-card:hover {
+            transform: scale(1.05);
+            z-index: 10;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+        }
+
+        .movie-card .thumbnail {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: linear-gradient(135deg, #1a1a2e, #2a2a4e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: #444;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .movie-card .thumbnail .play-icon {
+            position: absolute;
+            width: 48px;
+            height: 48px;
+            background: rgba(229, 9, 20, 0.85);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            transform: scale(0.8);
+        }
+
+        .movie-card:hover .thumbnail .play-icon {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .movie-card .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .movie-card .card-info {
+            padding: 0.7rem 0.8rem 0.9rem;
+        }
+
+        .movie-card .card-info h4 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .movie-card .card-info .meta {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 0.7rem;
+            color: #888;
+            margin-top: 0.2rem;
+        }
+
+        .movie-card .card-info .meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+        }
+
+        .movie-card .card-info .genre {
+            font-size: 0.65rem;
+            color: #666;
+            margin-top: 0.2rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .movie-card .card-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #e50914;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* ─── LOADING SKELETON ────────────────────────────── */
+        .skeleton {
+            flex: 0 0 200px;
+            min-width: 160px;
+            border-radius: 8px;
+            background: #1a1a2e;
+            aspect-ratio: 16 / 9;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 0.4;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        /* ─── EMPTY STATE ───────────────────────────────────── */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 1rem;
+            text-align: center;
+            color: #666;
+            width: 100%;
+        }
+
+        .empty-state .icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h3 {
+            color: #888;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            font-size: 0.9rem;
+            max-width: 400px;
+        }
+
+        /* ─── FOOTER ────────────────────────────────────────── */
+        .footer {
+            padding: 2.5rem 4% 1.5rem;
+            border-top: 1px solid #222;
+            margin-top: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .footer .brand {
+            color: #e50914;
+            font-weight: 800;
+            font-size: 1.2rem;
+        }
+
+        .footer .brand span {
+            color: #555;
+            font-weight: 300;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .footer-links a:hover {
+            color: #fff;
+        }
+
+        .footer .copy {
+            font-size: 0.7rem;
+            color: #444;
+        }
+
+        /* ─── RESPONSIVE ────────────────────────────────────── */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0.5rem 4%;
+            }
+            .navbar .logo {
+                font-size: 1.3rem;
+            }
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.8rem;
+            }
+            .nav-links a:not(.active) {
+                display: none;
+            }
+            .hero {
+                height: 70vh;
+                min-height: 400px;
+            }
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+            .hero-content p {
+                font-size: 0.9rem;
+            }
+            .movie-card {
+                flex: 0 0 140px;
+                min-width: 120px;
+            }
+            .skeleton {
+                flex: 0 0 140px;
+                min-width: 120px;
+            }
+            .section {
+                padding: 1rem 4% 0;
+            }
+            .footer {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .movie-card {
+                flex: 0 0 120px;
+                min-width: 100px;
+            }
+            .skeleton {
+                flex: 0 0 120px;
+                min-width: 100px;
+            }
+            .hero-content h1 {
+                font-size: 1.6rem;
+            }
+            .btn-primary,
+            .btn-secondary {
+                padding: 0.5rem 1.5rem;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ─── NAVBAR ────────────────────────────────────────── -->
+    <nav class="navbar" id="navbar">
+        <div class="logo">Movie<span>Trailers</span></div>
+        <div class="nav-links">
+            <a href="/" class="active">Home</a>
+            <a href="/trailers">Browse All</a>
+            <a href="#" id="genreLink">Genres</a>
+        </div>
+        <div class="nav-right">
+            <button class="search-btn" id="searchBtn">🔍</button>
+            <div class="avatar">MT</div>
+        </div>
+    </nav>
+
+    <!-- ─── HERO ────────────────────────────────────────────── -->
+    <section class="hero" id="hero">
+        <div class="hero-backdrop"></div>
+        <div class="hero-particles" id="particles"></div>
+        <div class="hero-content">
+            <span class="badge">🎬 Featured</span>
+            <h1>Welcome to <span class="highlight">MovieTrailers</span></h1>
+            <p>Watch the latest and greatest movie trailers all in one place. Discover your next favorite film.</p>
+            <div class="hero-buttons">
+                <button class="btn-primary" onclick="document.querySelector('.section').scrollIntoView({behavior:'smooth'})">
+                    ▶ Browse Trailers
+                </button>
+                <button class="btn-secondary" onclick="location.href='/trailers'">
+                    🎞️ All Trailers
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── TRAILER ROWS ───────────────────────────────────── -->
+    <div class="section" id="latestSection">
+        <div class="section-header">
+            <h2>🔥 Latest Trailers</h2>
+            <a href="/trailers" class="see-all">See All →</a>
+        </div>
+        <div class="row" id="latestRow">
+            <!-- Skeleton loaders -->
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-header">
+            <h2>⭐ Trending Now</h2>
+            <a href="/trailers" class="see-all">See All →</a>
+        </div>
+        <div class="row" id="trendingRow">
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-header">
+            <h2>🎭 All Trailers</h2>
+            <a href="/trailers" class="see-all">See All →</a>
+        </div>
+        <div class="row" id="allRow">
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+        </div>
+    </div>
+
+    <!-- ─── FOOTER ──────────────────────────────────────────── -->
+    <footer class="footer">
+        <div class="brand">Movie<span>Trailers</span></div>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/trailers">Browse</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+        </div>
+        <div class="copy">© 2025 MovieTrailers — All rights reserved</div>
+    </footer>
+
+    <script>
+        // ═══════════════════════════════════════════════════════════════
+        //  CONFIG
+        // ═══════════════════════════════════════════════════════════════
+
+        // 🎯 This is the folder where your trailer pages live.
+        // Each file should be: /trailers/movie-name.html
+        // You can also add a data attribute to each file for extra info.
+        const TRAILER_FOLDER = '/trailers';
+
+        // ─── TRAILER LIST ──────────────────────────────────────────────
+        // 📝 Add your trailer pages here as they are created.
+        // Format: { slug: 'file-name-without-html', title: 'Display Title', year: '2024', genre: 'Action' }
+        // The slug must match the actual filename in /trailers/
+        const TRAILERS = [{
+            slug: 'interstellar',
+            title: 'Interstellar',
+            year: '2014',
+            genre: 'Sci-Fi, Drama',
+            featured: true
+        }, {
+            slug: 'inception',
+            title: 'Inception',
+            year: '2010',
+            genre: 'Sci-Fi, Action',
+            featured: true
+        }, {
+            slug: 'dark-knight',
+            title: 'The Dark Knight',
+            year: '2008',
+            genre: 'Action, Crime',
+            featured: true
+        }, {
+            slug: 'gladiator-2',
+            title: 'Gladiator II',
+            year: '2024',
+            genre: 'Action, Drama'
+        }, {
+            slug: 'dune-part-two',
+            title: 'Dune: Part Two',
+            year: '2024',
+            genre: 'Sci-Fi, Adventure'
+        }, {
+            slug: 'furiosa',
+            title: 'Furiosa: A Mad Max Saga',
+            year: '2024',
+            genre: 'Action, Adventure'
+        }, {
+            slug: 'inside-out-2',
+            title: 'Inside Out 2',
+            year: '2024',
+            genre: 'Animation, Comedy'
+        }, {
+            slug: 'deadpool-wolverine',
+            title: 'Deadpool & Wolverine',
+            year: '2024',
+            genre: 'Action, Comedy'
+        }, {
+            slug: 'wicked',
+            title: 'Wicked',
+            year: '2024',
+            genre: 'Fantasy, Musical'
+        }, {
+            slug: 'moana-2',
+            title: 'Moana 2',
+            year: '2024',
+            genre: 'Animation, Adventure'
+        }, {
+            slug: 'sonic-3',
+            title: 'Sonic the Hedgehog 3',
+            year: '2024',
+            genre: 'Action, Comedy'
+        }, {
+            slug: 'mufasa',
+            title: 'Mufasa: The Lion King',
+            year: '2024',
+            genre: 'Animation, Adventure'
+        }, {
+            slug: 'avatar-3',
+            title: 'Avatar: Fire and Ash',
+            year: '2025',
+            genre: 'Sci-Fi, Adventure'
+        }, {
+            slug: 'superman-2025',
+            title: 'Superman (2025)',
+            year: '2025',
+            genre: 'Action, Adventure'
+        }, {
+            slug: 'fantastic-four',
+            title: 'The Fantastic Four',
+            year: '2025',
+            genre: 'Action, Sci-Fi'
+        }, {
+            slug: 'jurassic-world-rebirth',
+            title: 'Jurassic World Rebirth',
+            year: '2025',
+            genre: 'Action, Adventure'
+        }, {
+            slug: 'the-batman-2',
+            title: 'The Batman Part II',
+            year: '2026',
+            genre: 'Action, Crime'
+        }, {
+            slug: 'dune-messiah',
+            title: 'Dune: Messiah',
+            year: '2026',
+            genre: 'Sci-Fi, Adventure'
+        }, {
+            slug: 'star-wars-new-jedi',
+            title: 'Star Wars: New Jedi Order',
+            year: '2026',
+            genre: 'Sci-Fi, Adventure'
+        }, {
+            slug: 'avengers-secret-wars',
+            title: 'Avengers: Secret Wars',
+            year: '2027',
+            genre: 'Action, Sci-Fi'
+        }];
+
+        // ─── EMOJI FALLBACKS ─────────────────────────────────────────
+        const genreEmojis = {
+            'Action': '⚡',
+            'Adventure': '🗺️',
+            'Animation': '🎨',
+            'Comedy': '😂',
+            'Crime': '🔫',
+            'Drama': '🎭',
+            'Fantasy': '🐉',
+            'Musical': '🎵',
+            'Sci-Fi': '🚀',
+            'Thriller': '🔪',
+            'Horror': '👻',
+            'Romance': '❤️',
+            'Documentary': '📹',
+            'Family': '👨‍👩‍👧‍👦',
+            'History': '📜',
+            'Mystery': '🔍',
+            'War': '⚔️',
+            'Western': '🤠'
+        };
+
+        function getGenreEmoji(genre) {
+            const genres = genre.split(',').map(g => g.trim());
+            for (const g of genres) {
+                for (const [key, emoji] of Object.entries(genreEmojis)) {
+                    if (g.includes(key)) return emoji;
+                }
+            }
+            return '🎬';
+        }
+
+        // ─── HELPERS ──────────────────────────────────────────────────
+
+        function getTrailerUrl(slug) {
+            return `${TRAILER_FOLDER}/${slug}.html`;
+        }
+
+        function getRandomTrailers(count, exclude = []) {
+            const available = TRAILERS.filter(t => !exclude.includes(t.slug));
+            const shuffled = [...available].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, count);
+        }
+
+        function getFeaturedTrailers() {
+            return TRAILERS.filter(t => t.featured).slice(0, 6);
+        }
+
+        // ─── RENDER ROW ──────────────────────────────────────────────
+
+        function renderRow(containerId, trailers, title) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            if (!trailers || trailers.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="padding:2rem 0;">
+                        <div class="icon">📭</div>
+                        <h3>No trailers in this category</h3>
+                        <p>Check back later for new trailers!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = trailers.map(t => {
+                const url = getTrailerUrl(t.slug);
+                const emoji = getGenreEmoji(t.genre);
+                return `
+                    <a href="${url}" class="movie-card">
+                        <div class="thumbnail">
+                            <span>${emoji}</span>
+                            <div class="play-icon">▶</div>
+                            ${t.featured ? '<span class="card-badge">⭐ Featured</span>' : ''}
+                        </div>
+                        <div class="card-info">
+                            <h4>${t.title}</h4>
+                            <div class="meta">
+                                <span>📅 ${t.year || 'TBA'}</span>
+                                <span>⏱️ 2:30</span>
+                            </div>
+                            <div class="genre">${t.genre || 'Coming Soon'}</div>
+                        </div>
+                    </a>
+                `;
+            }).join('');
+        }
+
+        // ─── INIT ─────────────────────────────────────────────────────
+
+        function initHomepage() {
+            // Get featured trailers
+            const featured = getFeaturedTrailers();
+
+            // Get latest (most recent first) - just use first 6
+            const latest = TRAILERS.slice(0, 6);
+
+            // Get trending (random selection, but not featured)
+            const trending = getRandomTrailers(6, featured.map(t => t.slug));
+
+            // Get all (first 6 after latest)
+            const allOthers = TRAILERS.slice(6, 12);
+            const all = allOthers.length >= 6 ? allOthers : [...allOthers, ...getRandomTrailers(6 - allOthers.length, [...featured.map(t => t.slug), ...latest.map(t => t.slug)])];
+
+            // Render rows
+            renderRow('latestRow', latest, 'Latest');
+            renderRow('trendingRow', trending, 'Trending');
+            renderRow('allRow', all, 'All');
+
+            // Update hero with a random featured trailer
+            if (featured.length > 0) {
+                const heroTrailer = featured[Math.floor(Math.random() * featured.length)];
+                const heroTitle = document.querySelector('.hero-content h1');
+                if (heroTitle) {
+                    heroTitle.innerHTML = `Watch <span class="highlight">${heroTrailer.title}</span>`;
+                }
+                const heroDesc = document.querySelector('.hero-content p');
+                if (heroDesc) {
+                    heroDesc.textContent = `${heroTrailer.title} (${heroTrailer.year}) — ${heroTrailer.genre}. Click Browse Trailers to watch now!`;
+                }
+            }
+        }
+
+        // ─── NAVBAR SCROLL EFFECT ────────────────────────────────────
+
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // ─── PARTICLES ──────────────────────────────────────────────
+
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const count = 30;
+            for (let i = 0; i < count; i++) {
+                const span = document.createElement('span');
+                const size = 2 + Math.random() * 4;
+                span.style.width = size + 'px';
+                span.style.height = size + 'px';
+                span.style.left = Math.random() * 100 + '%';
+                span.style.animationDuration = (15 + Math.random() * 20) + 's';
+                span.style.animationDelay = (Math.random() * 20) + 's';
+                span.style.opacity = 0.2 + Math.random() * 0.3;
+                container.appendChild(span);
+            }
+        }
+        createParticles();
+
+        // ─── SEARCH ──────────────────────────────────────────────────
+
+        document.getElementById('searchBtn').addEventListener('click', () => {
+            const query = prompt('Search for a trailer:');
+            if (query && query.trim()) {
+                const results = TRAILERS.filter(t =>
+                    t.title.toLowerCase().includes(query.toLowerCase()) ||
+                    t.genre.toLowerCase().includes(query.toLowerCase())
+                );
+                if (results.length > 0) {
+                    // Scroll to all row and show results
+                    document.getElementById('allRow').scrollIntoView({ behavior: 'smooth' });
+                    renderRow('allRow', results, 'Search Results');
+                } else {
+                    alert('No trailers found for "' + query + '"');
+                }
+            }
+        });
+
+        // ─── GENRE FILTER ──────────────────────────────────────────
+
+        document.getElementById('genreLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            const genres = [...new Set(TRAILERS.map(t => t.genre).filter(Boolean))];
+            const genreList = genres.map((g, i) => `${i+1}. ${g}`).join('\n');
+            const choice = prompt(`Select a genre by number:\n${genreList}`);
+            if (choice) {
+                const idx = parseInt(choice) - 1;
+                if (idx >= 0 && idx < genres.length) {
+                    const selected = genres[idx];
+                    const results = TRAILERS.filter(t => t.genre && t.genre.includes(selected));
+                    if (results.length > 0) {
+                        document.getElementById('allRow').scrollIntoView({ behavior: 'smooth' });
+                        renderRow('allRow', results, `🎭 ${selected}`);
+                    }
+                }
+            }
+        });
+
+        // ─── RUN ─────────────────────────────────────────────────────
+
+        document.addEventListener('DOMContentLoaded', initHomepage);
+
+        // If DOM already loaded, run immediately
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            initHomepage();
+        }
+    </script>
+</body>
+</html>
