@@ -1,0 +1,4 @@
+/                    /index.html
+/trailers            /trailers.html
+/trailers/*          /trailers.html
+/*                    /404.html
